@@ -32,6 +32,12 @@ final class PencilCanvasState {
         syncCount()
     }
 
+    /// Composites the DICOM image and all drawn strokes into a single `UIImage`.
+    /// Returns `nil` if the canvas view is not yet attached or has zero size.
+    func snapshot(backgroundCGImage: CGImage) -> UIImage? {
+        canvasView?.snapshot(backgroundCGImage: backgroundCGImage)
+    }
+
     private func syncCount() {
         strokeCount = canvasView?.strokeCount ?? 0
     }
@@ -77,6 +83,25 @@ final class PencilCanvasUIView: UIView {
     required init?(coder: NSCoder) { fatalError() }
 
     // MARK: Public API
+
+    /// Renders the DICOM image + all strokes into a single `UIImage`.
+    /// The CGImage is drawn scaled to fill the view bounds; stroke layers are
+    /// composited on top in the same coordinate space.
+    func snapshot(backgroundCGImage: CGImage) -> UIImage {
+        let size = bounds.size.width > 0 ? bounds.size : CGSize(width: 512, height: 512)
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { ctx in
+            let cgCtx = ctx.cgContext
+            // CGImage origin is bottom-left; UIKit is top-left — flip to draw upright
+            cgCtx.saveGState()
+            cgCtx.translateBy(x: 0, y: size.height)
+            cgCtx.scaleBy(x: 1, y: -1)
+            cgCtx.draw(backgroundCGImage, in: CGRect(origin: .zero, size: size))
+            cgCtx.restoreGState()
+            // Render all stroke CAShapeLayers on top
+            layer.render(in: cgCtx)
+        }
+    }
 
     func undo() {
         guard let last = strokeLayers.popLast() else { return }

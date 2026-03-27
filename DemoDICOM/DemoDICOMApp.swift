@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 import GroupActivities
 
 @main
@@ -19,6 +20,7 @@ struct DemoDICOMApp: App {
             RootView()
                 .environment(store)
         }
+        .modelContainer(for: SavedAnnotation.self)
 
         // 2-D annotation window.
         // Opened from ContentView when the user pinches and holds on the CT slice.

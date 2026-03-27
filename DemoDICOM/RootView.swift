@@ -22,7 +22,7 @@ struct RootView: View {
             if store.sharePlay.isInSession && !store.sharePlay.sessionHasStarted {
                 LobbyView()
             } else {
-                ContentView()
+                MainTabView()
             }
         }
         .task {
