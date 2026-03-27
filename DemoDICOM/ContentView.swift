@@ -14,6 +14,7 @@ struct ContentView: View {
     /// The store is owned by `DemoDICOMApp` and shared via the environment.
     @Environment(DICOMStore.self) private var store
 
+    @Environment(\.openWindow) private var openWindow
     @Environment(\.openImmersiveSpace) private var openImmersiveSpace
     @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
     @State private var isDrawingSpaceOpen = false
@@ -151,6 +152,15 @@ struct ContentView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                     .shadow(radius: 4)
                     .frame(maxHeight: .infinity)
+                    .onLongPressGesture(minimumDuration: 0.5) {
+                        openWindow(id: "annotation")
+                    }
+                    .overlay(alignment: .bottomTrailing) {
+                        Label("Hold to annotate", systemImage: "pencil.and.outline")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                            .padding(6)
+                    }
             }
 
             sliceControls

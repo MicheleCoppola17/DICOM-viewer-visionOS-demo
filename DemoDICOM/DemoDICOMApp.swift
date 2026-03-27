@@ -20,6 +20,14 @@ struct DemoDICOMApp: App {
                 .environment(store)
         }
 
+        // 2-D annotation window.
+        // Opened from ContentView when the user pinches and holds on the CT slice.
+        WindowGroup(id: "annotation") {
+            AnnotationView()
+                .environment(store)
+        }
+        .defaultSize(width: 720, height: 780)
+
         // Mixed-immersion drawing space.
         // Opened/dismissed from ContentView via openImmersiveSpace / dismissImmersiveSpace.
         ImmersiveSpace(id: "DrawingSpace") {
