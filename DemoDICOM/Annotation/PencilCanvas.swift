@@ -143,7 +143,7 @@ final class PencilCanvasUIView: UIView {
     // MARK: Touch handling — Apple Pencil Pro only
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let touch = touches.first, touch.type == .pencil else { return }
+        guard let touch = touches.first, touch.type == .pencil || touch.type == .direct else { return }
 
         let point = touch.location(in: self)
         let path  = UIBezierPath()
@@ -159,7 +159,7 @@ final class PencilCanvasUIView: UIView {
     }
 
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let touch = touches.first, touch.type == .pencil,
+        guard let touch = touches.first, touch.type == .pencil || touch.type == .direct,
               let path = currentPath else { return }
 
         // Coalesced touches give higher-resolution input with lower latency
@@ -173,7 +173,7 @@ final class PencilCanvasUIView: UIView {
     }
 
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let touch = touches.first, touch.type == .pencil else { return }
+        guard let touch = touches.first, touch.type == .pencil || touch.type == .direct else { return }
         emitPoint(touch.location(in: self), isStart: false, isEnd: true)
         finaliseStroke()
     }
